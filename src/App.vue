@@ -1,30 +1,37 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+  <div id="app">
+   <router-view/>
+  </div>
 </template>
 
+<script setup>
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import jwt_decode from "jwt-decode";
+const router = useRouter();
+const store = useStore();
+// 判断解析的token是否为空
+const isEmpty = (value) => {
+  return (
+    value === undefined ||
+    value === null ||
+    (typeof value === "object" && Object.keys(value).length === 0) ||
+    (typeof value === "string" && value.trim().length === 0)
+  );
+};
+if (localStorage.eleToken) {
+  // 解析token存到vuex中
+  const decoded = jwt_decode(localStorage.eleToken);
+  store.dispatch("setAuthenticated", !isEmpty(decoded));
+  store.dispatch("setUser", decoded);
+}
+</script>
+
 <style>
+html,
+body,
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-nav {
-  padding: 30px;
-}
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
+  width:100%;
+  height:100%;
 }
 </style>
